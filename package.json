@@ -33,6 +33,6 @@
     "@zoetisdenmark:registry": "https://npm.pkg.github.com"
   },
   "repository": {
-    "url": "git://github.com/ZoetisDenmark/vetscan-fuse-entities.git"
+    "url": "git://github.com/ZoetisDenmark/netgear.js.git"
   }
 }
