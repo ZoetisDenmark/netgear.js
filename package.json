@@ -1,15 +1,11 @@
 {
-  "name": "netgear",
+  "name": "@zoetisdenmark/netgear",
   "version": "4.4.2",
-  "description": "Node module to interact with Netgear routers via SOAP",
+  "description": "Zoetis netgear fork node module to interact with Netgear routers via SOAP",
   "main": "netgear.js",
   "scripts": {
     "test": "node test/test.js",
     "generate-docs": "jsdoc --configure .jsdoc.json --verbose"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gruijter/netgear.js.git"
   },
   "directories": {
     "doc": "docs",
@@ -32,5 +28,11 @@
   "dependencies": {
     "smart-request-balancer": "^2.1.1",
     "xml-js": "^1.6.11"
+  },
+  "publishConfig": {
+    "@zoetisdenmark:registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "url": "git://github.com/ZoetisDenmark/vetscan-fuse-entities.git"
   }
 }

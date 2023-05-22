@@ -1,0 +1,32 @@
+name: push update to registry
+on:
+  push:
+    branches:
+      - master
+jobs:
+  publish_tag_package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+
+      - name: 'Automated Version Bump'
+        uses: 'phips28/gh-action-bump-version@master'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          minor-wording: 'add,minor'
+          major-wording: 'major'
+          patch-wording: 'patch,fixes,fix'
+          rc-wording: 'RELEASE,alpha,release,Release'
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@zoetisdenmark'
+      - run: npm ci
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
