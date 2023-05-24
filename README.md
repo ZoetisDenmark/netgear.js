@@ -4,6 +4,7 @@ Can do more than the Netgear Nighthawk, Orbi or Genie app can do.
 ## Supported routers
 In general: If you can use the Nighthawk Orbi or Nighthawk app to manage the router, then this node package will most likely work. Some functionality, like blocking/unblocking an attached device, only work on certain router types. MAKE SURE YOU ARE ON THE LATEST ROUTER FIRMWARE!
 
+
 You can check your router version by browsing to [routerlogin.net](http://routerlogin.net/currentsetting.htm). According to the Genie and NETGEAR Nighthawk app description, at least the following routers or extenders should work:
 
 Nighthawk: AX8 AX12 Tri-Band AX12 XR300 XR450 XR500 XR700 AC2100 AC2400 AC2600 R9000 R8900 R8500 R8300 R8000 R8000P R7900P R7960P R7900 R7800 R7000P R7000 R6900P R6900v2 R6900 R6850 R6800 R7450 R6700v3 R6700v2 R6400v2 R6400 R6350 R6260 R6230 R6220 R6120 R6080 R6020
