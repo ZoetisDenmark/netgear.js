@@ -1,6 +1,6 @@
 
-const netgear = require('./netgear');
-const netgearZoetis = require('./netgear_zoetis');
+const NetgearRouter = require('./netgear');
+const ZoetisNetgearRouter = require('./netgear_zoetis');
 module.exports ={
-  netgear, netgearZoetis
+  NetgearRouter, ZoetisNetgearRouter
 }
