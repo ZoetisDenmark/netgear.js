@@ -2,7 +2,7 @@
   "name": "@zoetisdenmark/netgear",
   "version": "4.4.3",
   "description": "Zoetis netgear fork node module to interact with Netgear routers via SOAP",
-  "main": "netgear.js",
+  "main": "index.js",
   "scripts": {
     "test": "node test/test.js",
     "generate-docs": "jsdoc --configure .jsdoc.json --verbose"
