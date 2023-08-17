@@ -334,6 +334,74 @@ async responseObject(body)
 
 	return (obj);
 	}
+
+	async _makeHttpsPageRequest(options, postData, timeout=null, pw=null) {
+
+		try
+		{
+			const try_pw = pw || this.password;
+
+			const headers = {
+				'cache-control': 'no-cache',
+				'user-agent': 'node-netgearjs',
+				'content-type': 'application/x-www-form-urlencoded',
+				'content-length': Buffer.byteLength(postData),
+				'authorization': `Basic ${Buffer.from(`${this.username}:${try_pw}`).toString('base64')}`,
+				connection: 'Keep-Alive',
+			};
+
+			if (this.cookie)
+			{
+				headers.cookie = this.cookie;
+			}
+
+			const _options =
+			{
+				...{
+					hostname: this.host,
+					port: this.port,
+					path: '/',
+					rejectUnauthorized: false,		// allows self-signed cert...
+					headers,
+					method: postData ? 'POST' : 'GET',
+					},
+				...options
+			};
+
+		return new Promise((resolve, reject) => {
+
+			const opts = _options;
+			opts.timeout = timeout || this.timeout;
+
+			const req = https.request(opts, (res) => {
+				let resBody = '';
+				res.on('data', (chunk) => {
+					resBody += chunk;
+				});
+				res.once('end', () => {
+					if (!res.complete) {
+						return reject(Error('The connection was terminated while the message was still being sent'));
+					}
+					res.body = resBody;
+					return resolve(res); // resolve the request
+				});
+			});
+			req.on('error', (e) => {
+				req.destroy();
+				this.lastResponse = e;	// e.g. ECONNREFUSED on wrong soap port or wrong IP // ECONNRESET on wrong IP
+				return reject(e);
+			});
+			req.on('timeout', () => {
+				req.destroy();
+			});
+			// req.write(postData);
+			req.end(postData);
+		});
+	}
+	catch (e)
+	{
+	}
+}
 }
 
 module.exports = ZoetisNetgearRouter;
