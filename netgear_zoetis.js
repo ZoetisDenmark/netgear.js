@@ -302,37 +302,37 @@ class ZoetisNetgearRouter extends NetgearRouter {
 			}
 		}
 
-async responseObject(body)
-{
+	async responseObject(body)
+	{
 
-	const parseOptions = {
-		compact: true, nativeType: true, ignoreDeclaration: true, ignoreAttributes: true, spaces: 2,
-	};
+		const parseOptions = {
+			compact: true, nativeType: true, ignoreDeclaration: true, ignoreAttributes: true, spaces: 2,
+		};
 
-	const rawJson = parseXml.xml2js(body, parseOptions);
-	const obj = {};
+		const rawJson = parseXml.xml2js(body, parseOptions);
+		const obj = {};
 
-	Object.keys(rawJson['v:Envelope']['v:Body']).forEach((property) =>
-		{
-			if (Object.prototype.hasOwnProperty.call(rawJson['v:Envelope']['v:Body'], property))
+		Object.keys(rawJson['v:Envelope']['v:Body']).forEach((property) =>
 			{
-				if (typeof rawJson['v:Envelope']['v:Body'][property] != 'object')
-					obj[property] = rawJson['v:Envelope']['v:Body'][property];
-				else if (property == 'ResponseCode')
-					obj[property] = rawJson['v:Envelope']['v:Body'][property]['_text'];
-				else
+				if (Object.prototype.hasOwnProperty.call(rawJson['v:Envelope']['v:Body'], property))
 				{
-					Object.keys(rawJson['v:Envelope']['v:Body'][property]).forEach((i_property) =>
-						{
-							obj[i_property] = rawJson['v:Envelope']['v:Body'][property][i_property]._text;
-						}
-					);
+					if (typeof rawJson['v:Envelope']['v:Body'][property] != 'object')
+						obj[property] = rawJson['v:Envelope']['v:Body'][property];
+					else if (property == 'ResponseCode')
+						obj[property] = rawJson['v:Envelope']['v:Body'][property]['_text'];
+					else
+					{
+						Object.keys(rawJson['v:Envelope']['v:Body'][property]).forEach((i_property) =>
+							{
+								obj[i_property] = rawJson['v:Envelope']['v:Body'][property][i_property]._text;
+							}
+						);
+					}
 				}
 			}
-		}
-	);
+		);
 
-	return (obj);
+		return (obj);
 	}
 
 	async _makeHttpsPageRequest(options, postData, timeout=null, pw=null) {
@@ -368,40 +368,185 @@ async responseObject(body)
 				...options
 			};
 
-		return new Promise((resolve, reject) => {
+			return new Promise((resolve, reject) => {
 
-			const opts = _options;
-			opts.timeout = timeout || this.timeout;
+				const opts = _options;
+				opts.timeout = timeout || this.timeout;
 
-			const req = https.request(opts, (res) => {
-				let resBody = '';
-				res.on('data', (chunk) => {
-					resBody += chunk;
+				const req = https.request(opts, (res) => {
+					let resBody = '';
+					res.on('data', (chunk) => {
+						resBody += chunk;
+					});
+					res.once('end', () => {
+						if (!res.complete) {
+							return reject(Error('The connection was terminated while the message was still being sent'));
+						}
+						res.body = resBody;
+						return resolve(res); // resolve the request
+					});
 				});
-				res.once('end', () => {
-					if (!res.complete) {
-						return reject(Error('The connection was terminated while the message was still being sent'));
-					}
-					res.body = resBody;
-					return resolve(res); // resolve the request
+				req.on('error', (e) => {
+					req.destroy();
+					this.lastResponse = e;	// e.g. ECONNREFUSED on wrong soap port or wrong IP // ECONNRESET on wrong IP
+					return reject(e);
 				});
+				req.on('timeout', () => {
+					req.destroy();
+				});
+				// req.write(postData);
+				req.end(postData);
 			});
-			req.on('error', (e) => {
-				req.destroy();
-				this.lastResponse = e;	// e.g. ECONNREFUSED on wrong soap port or wrong IP // ECONNRESET on wrong IP
-				return reject(e);
-			});
-			req.on('timeout', () => {
-				req.destroy();
-			});
-			// req.write(postData);
-			req.end(postData);
-		});
+		}
+		catch (e)
+		{
+		}
 	}
-	catch (e)
-	{
+
+	
+	async setConfigMACReservation(p) {
+		try {
+			await this._configurationStarted();
+			const message = soap.setConfigMACReservation(this.sessionId,p);
+			const result = await this._queueMessage(soap.action.setConfigMACReservation, message);
+
+			await this._configurationFinished()
+				.catch(() => {
+					console.log(`finished with warning`);
+				});
+
+			var resp = regexResponseCode.exec(result.body)[1] === '000';
+			return Promise.resolve(resp);
+		} catch (error) {
+			return Promise.reject(error);
+		}
 	}
-}
+
+
+	async setWLANWPAPSKByPassphrase(p) {
+		try {
+			await this._configurationStarted();
+			const message = soap.setWLANWPAPSKByPassphrase(this.sessionId,p);
+			const result = await this._queueMessage(soap.action.setWLANWPAPSKByPassphrase, message);
+			await this._configurationFinished()
+				.catch(() => {
+					console.log(`finished with warning`);
+				});
+			return Promise.resolve(true);
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	}
+	
+	
+	async set5GWLANWPAPSKByPassphrase(p) {
+		try {
+			await this._configurationStarted();
+			const message = soap.set5GWLANWPAPSKByPassphrase(this.sessionId,p);
+			const result = await this._queueMessage(soap.action.set5GWLANWPAPSKByPassphrase, message);
+			await this._configurationFinished()
+				.catch(() => {
+					console.log(`finished with warning`);
+				});
+			return Promise.resolve(true);
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	}
+	
+
+	async setAllGuestAccessEnabled(p) {
+		try {
+			await this._configurationStarted();
+			const message = soap.setAllGuestAccessEnabled(this.sessionId,p);
+			const result = await this._queueMessage(soap.action.setAllGuestAccessEnabled, message);
+			await this._configurationFinished()
+				.catch(() => {
+					console.log(`finished with warning`);
+				});
+			return Promise.resolve(true);
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	}
+
+	async set5GAllGuestAccessEnabled(p) {
+		try {
+			await this._configurationStarted();
+			const message = soap.set5GAllGuestAccessEnabled(this.sessionId,p);
+			const result = await this._queueMessage(soap.action.set5GAllGuestAccessEnabled, message);
+			await this._configurationFinished()
+				.catch(() => {
+					console.log(`finished with warning`);
+				});
+			return Promise.resolve(true);
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	}
+
+	
+	async setWireless3Enabled(p) {
+		try {
+			await this._configurationStarted();
+			const message = soap.setWireless3Enabled(this.sessionId,p);
+			const result = await this._queueMessage(soap.action.setWireless3Enabled, message);
+			await this._configurationFinished()
+				.catch(() => {
+					console.log(`finished with warning`);
+				});
+			return Promise.resolve(true);
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	}
+
+	async set5GWireless3Enabled(p) {
+		try {
+			await this._configurationStarted();
+			const message = soap.set5GWireless3Enabled(this.sessionId,p);
+			const result = await this._queueMessage(soap.action.set5GWireless3Enabled, message);
+			await this._configurationFinished()
+				.catch(() => {
+					console.log(`finished with warning`);
+				});
+			return Promise.resolve(true);
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	}
+
+
+	async setGuestPortal(p) {
+		try {
+			await this._configurationStarted();
+			const message = soap.setGuestPortal(this.sessionId,p);
+			const result = await this._queueMessage(soap.action.setGuestPortal, message);
+			await this._configurationFinished()
+				.catch(() => {
+					console.log(`finished with warning`);
+				});
+			return Promise.resolve(true);
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	}
+
+	async set5GGuestPortal(p) {
+		try {
+			await this._configurationStarted();
+			const message = soap.set5GGuestPortal(this.sessionId,p);
+			const result = await this._queueMessage(soap.action.set5GGuestPortal, message);
+			await this._configurationFinished()
+				.catch(() => {
+					console.log(`finished with warning`);
+				});
+			return Promise.resolve(true);
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	}
+
 }
 
 module.exports = ZoetisNetgearRouter;

@@ -1,5 +1,3 @@
-
-
 const netgearSoapCalls = require('./soapcalls')
 
 exports.action = {
@@ -13,8 +11,10 @@ exports.action = {
 
 	getWLANGetInfo: 'urn:NETGEAR-ROUTER:service:WLANConfiguration:1#GetInfo',
 	getWLANGet5GInfo: 'urn:NETGEAR-ROUTER:service:WLANConfiguration:1#Get5GInfo',
-	setWLANSetInfo: 'urn:NETGEAR-ROUTER:service:WLANConfiguration:1#SetInfo',
-	setWLANSet5GInfo: 'urn:NETGEAR-ROUTER:service:WLANConfiguration:1#Set5GInfo',
+	setWLANWPAPSKByPassphrase: 'urn:NETGEAR-ROUTER:service:WLANConfiguration:1#SetWLANWPAPSKByPassphrase',
+	set5GWLANWPAPSKByPassphrase: 'urn:NETGEAR-ROUTER:service:WLANConfiguration:1#Set5GWLANWPAPSKByPassphrase',
+	//setWLANSetInfo: 'urn:NETGEAR-ROUTER:service:WLANConfiguration:1#SetInfo',
+	//setWLANSet5GInfo: 'urn:NETGEAR-ROUTER:service:WLANConfiguration:1#Set5GInfo',
 
 	getGuestAccessNetworkInfo: 'urn:NETGEAR-ROUTER:service:WLANConfiguration:1#GetGuestAccessNetworkInfo',
 	get5GGuestAccessNetworkInfo: 'urn:NETGEAR-ROUTER:service:WLANConfiguration:1#Get5GGuestAccessNetworkInfo',
@@ -228,5 +228,209 @@ exports.getVLANProfileConfiguration = (sessionId) => {
 	const soapBody = `<v:Body>
 		<n0:GetVLANProfileConfiguration xmlns:n0="urn:NETGEAR-ROUTER:service:DeviceConfig:1" />
 	</v:Body>`;
+	return soapEnvelope(sessionId, soapBody);
+};
+
+
+exports.setWLANWPAPSKByPassphrase = (sessionId, p ) => {
+	const d = {	};
+
+	const v = { ...d, ...p };
+
+	const soapBody =
+		`<v:Body>
+			<M1:SetWLANWPAPSKByPassphrase xmlns:M1="urn:NETGEAR-ROUTER:service:WLANConfiguration:1">
+				<NewSSID>${v.NewSSID}</NewSSID>
+				<NewRegion>${v.NewRegion}</NewRegion>
+				<NewChannel>${v.NewChannel}</NewChannel>
+				<NewWirelessMode>${v.NewWirelessMode}</NewWirelessMode>
+				<NewWPAEncryptionModes>${v.NewWPAEncryptionModes}</NewWPAEncryptionModes>
+				<NewWPAPassphrase>${v.NewWPAPassphrase}</NewWPAPassphrase>
+			</M1:SetWLANWPAPSKByPassphrase>
+		</v:Body>`;
+
+	return soapEnvelope(sessionId, soapBody);
+};
+
+
+exports.set5GWLANWPAPSKByPassphrase = (sessionId, p ) => {
+	const d = {	};
+
+	const v = { ...d, ...p };
+
+	const soapBody =
+		`<v:Body>
+			<M1:Set5GWLANWPAPSKByPassphrase xmlns:M1="urn:NETGEAR-ROUTER:service:WLANConfiguration:1">
+				<NewSSID>${v.NewSSID}</NewSSID>
+				<NewRegion>${v.NewRegion}</NewRegion>
+				<NewChannel>${v.NewChannel}</NewChannel>
+				<NewWirelessMode>${v.NewWirelessMode}</NewWirelessMode>
+				<NewWPAEncryptionModes>${v.NewWPAEncryptionModes}</NewWPAEncryptionModes>
+				<NewWPAPassphrase>${v.NewWPAPassphrase}</NewWPAPassphrase>
+			</M1:Set5GWLANWPAPSKByPassphrase>
+		</v:Body>`;
+
+	return soapEnvelope(sessionId, soapBody);
+};
+
+
+
+exports.setAllGuestAccessEnabled = (sessionId, p ) => {
+	const d = {	};
+
+	const v = { ...d, ...p };
+
+	const soapBody =
+		`<v:Body>
+			<M1:SetAllGuestAccessEnabled xmlns:M1="urn:NETGEAR-ROUTER:service:WLANConfiguration:1">
+				<NewGuestAccessEnabled>${v.NewGuestAccessEnabled}</NewGuestAccessEnabled>
+				<NewSSID>${v.NewSSID}</NewSSID>
+				<NewSecurityMode>${v.NewSecurityMode}</NewSecurityMode>
+				<SeparateSSIDEnabled>${v.SeparateSSIDEnabled}</SeparateSSIDEnabled>
+				<NewKey1>${v.NewKey1}</NewKey1>
+				<NewSSIDBroadcast>${v.NewSSIDBroadcast}</NewSSIDBroadcast>
+				<NewAllowAccessLan>${v.NewAllowAccessLan}</NewAllowAccessLan>
+				<VlanProfile>${v.VlanProfile}</VlanProfile>
+				<VlanEnable>${v.VlanEnable}</VlanEnable>
+				<NewEnterpriseWPAMode>${v.NewEnterpriseWPAMode}</NewEnterpriseWPAMode>
+				<NewRadiusServerAddress>${v.NewRadiusServerAddress}</NewRadiusServerAddress>
+				<NewRadiusServerPort>${v.NewRadiusServerPort}</NewRadiusServerPort>
+			</M1:SetAllGuestAccessEnabled>
+		</v:Body>`;
+
+	return soapEnvelope(sessionId, soapBody);
+};
+
+
+
+exports.set5GAllGuestAccessEnabled = (sessionId, p ) => {
+	const d = {	};
+
+	const v = { ...d, ...p };
+
+	const soapBody =
+		`<v:Body>
+			<M1:Set5GAllGuestAccessEnabled xmlns:M1="urn:NETGEAR-ROUTER:service:WLANConfiguration:1">
+				<NewGuestAccessEnabled>${v.NewGuestAccessEnabled}</NewGuestAccessEnabled>
+				<NewSSID>${v.NewSSID}</NewSSID>
+				<NewSecurityMode>${v.NewSecurityMode}</NewSecurityMode>
+				<SeparateSSIDEnabled>${v.SeparateSSIDEnabled}</SeparateSSIDEnabled>
+				<NewKey1>${v.NewKey1}</NewKey1>
+				<NewSSIDBroadcast>${v.NewSSIDBroadcast}</NewSSIDBroadcast>
+				<NewAllowAccessLan>${v.NewAllowAccessLan}</NewAllowAccessLan>
+				<VlanProfile>${v.VlanProfile}</VlanProfile>
+				<VlanEnable>${v.VlanEnable}</VlanEnable>
+				<NewEnterpriseWPAMode>${v.NewEnterpriseWPAMode}</NewEnterpriseWPAMode>
+				<NewRadiusServerAddress>${v.NewRadiusServerAddress}</NewRadiusServerAddress>
+				<NewRadiusServerPort>${v.NewRadiusServerPort}</NewRadiusServerPort>
+			</M1:Set5GAllGuestAccessEnabled>
+		</v:Body>`;
+
+	return soapEnvelope(sessionId, soapBody);
+};
+
+
+exports.setWireless3Enabled = (sessionId, p ) => {
+	const d = {	};
+
+	const v = { ...d, ...p };
+
+	const soapBody =
+		`<v:Body>
+			<M1:SetWireless3Enabled xmlns:M1="urn:NETGEAR-ROUTER:service:WLANConfiguration:1">
+				<NewEnable>${v.NewEnable}</NewEnable>
+				<NewSSID>${v.NewSSID}</NewSSID>
+				<NewSecurityMode>${v.NewSecurityMode}</NewSecurityMode>
+				<SeparateSSIDEnabled>${v.SeparateSSIDEnabled}</SeparateSSIDEnabled>
+				<NewKey1>${v.NewKey1}</NewKey1>
+				<VlanProfile>${v.VlanProfile}</VlanProfile>
+				<VlanEnable>${v.VlanEnable}</VlanEnable>
+				<NewEnterpriseWPAMode>${v.NewEnterpriseWPAMode}</NewEnterpriseWPAMode>
+				<NewRadiusServerAddress>${v.NewRadiusServerAddress}</NewRadiusServerAddress>
+				<NewRadiusServerPort>${v.NewRadiusServerPort}</NewRadiusServerPort>
+				<NewSSIDBroadcast>${v.NewSSIDBroadcast}</NewSSIDBroadcast>
+				<NewAllowAccessLan>${v.NewAllowAccessLan}</NewAllowAccessLan>
+			</M1:SetWireless3Enabled>
+		</v:Body>`;
+
+	return soapEnvelope(sessionId, soapBody);
+};
+
+
+exports.set5GWireless3Enabled = (sessionId, p ) => {
+	const d = {	};
+
+	const v = { ...d, ...p };
+
+	const soapBody =
+		`<v:Body>
+			<M1:Set5GWireless3Enabled xmlns:M1="urn:NETGEAR-ROUTER:service:WLANConfiguration:1">
+				<NewEnable>${v.NewEnable}</NewEnable>
+				<NewSSID>${v.NewSSID}</NewSSID>
+				<NewSecurityMode>${v.NewSecurityMode}</NewSecurityMode>
+				<SeparateSSIDEnabled>${v.SeparateSSIDEnabled}</SeparateSSIDEnabled>
+				<NewKey1>${v.NewKey1}</NewKey1>
+				<VlanProfile>${v.VlanProfile}</VlanProfile>
+				<VlanEnable>${v.VlanEnable}</VlanEnable>
+				<NewEnterpriseWPAMode>${v.NewEnterpriseWPAMode}</NewEnterpriseWPAMode>
+				<NewRadiusServerAddress>${v.NewRadiusServerAddress}</NewRadiusServerAddress>
+				<NewRadiusServerPort>${v.NewRadiusServerPort}</NewRadiusServerPort>
+				<NewSSIDBroadcast>${v.NewSSIDBroadcast}</NewSSIDBroadcast>
+				<NewAllowAccessLan>${v.NewAllowAccessLan}</NewAllowAccessLan>
+			</M1:Set5GWireless3Enabled>
+		</v:Body>`;
+
+	return soapEnvelope(sessionId, soapBody);
+};
+
+
+exports.setGuestPortal = (sessionId, p ) => {
+	const d = {	};
+
+	const v = { ...d, ...p };
+
+	const soapBody =
+		`<v:Body>
+			<M1:SetGuestPortal xmlns:M1="urn:NETGEAR-ROUTER:service:WLANConfiguration:1">
+				<NewEnable>${v.NewEnable}</NewEnable>
+				<NewSSID>${v.NewSSID}</NewSSID>
+				<NewSecurityOption>${v.NewSecurityOption}</NewSecurityOption>
+				<NewKey1>${v.NewKey1}</NewKey1>
+				<NewSSIDBroadcast>${v.NewSSIDBroadcast}</NewSSIDBroadcast>
+				<VlanProfile>${v.VlanProfile}</VlanProfile>
+				<VlanEnable>${v.VlanEnable}</VlanEnable>
+				<NewAuthMode>${v.NewAuthMode}</NewAuthMode>
+				<NewAuthOption>${v.NewAuthOption}</NewAuthOption>
+				<NewAuthPassword>${v.NewAuthPassword}</NewAuthPassword>
+				<NewExpiration>${v.NewExpiration}</NewExpiration>
+			</M1:SetGuestPortal>
+		</v:Body>`;
+
+	return soapEnvelope(sessionId, soapBody);
+};
+
+
+exports.set5GGuestPortal = (sessionId, p ) => {
+	const d = {	};
+
+	const v = { ...d, ...p };
+
+	const soapBody =
+		`<v:Body>
+			<M1:Set5GGuestPortal xmlns:M1="urn:NETGEAR-ROUTER:service:WLANConfiguration:1">
+				<NewEnable>${v.NewEnable}</NewEnable>
+				<NewSSID>${v.NewSSID}</NewSSID>
+				<NewSecurityOption>${v.NewSecurityOption}</NewSecurityOption>
+				<NewKey1>${v.NewKey1}</NewKey1>
+				<NewSSIDBroadcast>${v.NewSSIDBroadcast}</NewSSIDBroadcast>
+				<VlanProfile>${v.VlanProfile}</VlanProfile>
+				<VlanEnable>${v.VlanEnable}</VlanEnable>
+				<NewAuthMode>${v.NewAuthMode}</NewAuthMode>
+				<NewAuthOption>${v.NewAuthOption}</NewAuthOption>
+				<NewAuthPassword>${v.NewAuthPassword}</NewAuthPassword>
+				<NewExpiration>${v.NewExpiration}</NewExpiration>
+			</M1:Set5GGuestPortal>
+		</v:Body>`;
+
 	return soapEnvelope(sessionId, soapBody);
 };
