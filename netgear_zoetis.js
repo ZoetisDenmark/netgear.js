@@ -8,7 +8,8 @@ const util = require('util');
 const dns = require('dns');
 const dgram = require('dgram');
 const os = require('os');
-const soap = require('./soapcalls_zoetis');
+//const soap = require('./soapcalls_zoetis');
+const soap = require('./soapcalls');
 const soapZoetis = require('./soapcalls_zoetis');
 
 const setTimeoutPromise = util.promisify(setTimeout);
@@ -289,13 +290,24 @@ class ZoetisNetgearRouter extends NetgearRouter {
 		}
 
 
-		async api_get(apicall)
+		async api_get(apicall,_apicall='')
 		{
+			if (_apicall === '')
+				_apicall = apicall;
+
 			try
 			{
-				const message = soapZoetis[apicall](this.sessionId);
-				var result = await this._queueMessage(soapZoetis.action[apicall], message);
-
+				if (apicall in soapZoetis.action)
+				{
+					const message = soapZoetis[_apicall](this.sessionId);
+					var result = await this._queueMessage(soapZoetis.action[apicall], message);
+				}
+				else
+				{
+					const message = soap[_apicall](this.sessionId);
+					var result = await this._queueMessage(soap.action[apicall], message);
+				}
+				
 				return Promise.resolve(this.responseObject(result.body));
 			} catch (error) {
 				return Promise.reject(error);
@@ -304,7 +316,6 @@ class ZoetisNetgearRouter extends NetgearRouter {
 
 	async responseObject(body)
 	{
-
 		const parseOptions = {
 			compact: true, nativeType: true, ignoreDeclaration: true, ignoreAttributes: true, spaces: 2,
 		};
@@ -312,6 +323,10 @@ class ZoetisNetgearRouter extends NetgearRouter {
 		const rawJson = parseXml.xml2js(body, parseOptions);
 		const obj = {};
 
+		// we are copying the essential data out of the XML oriented rawJson object and storing it in a less complex object
+		//
+		// this logic is fairly specific to the netgear API response data structure, and allows for an array response
+		//
 		Object.keys(rawJson['v:Envelope']['v:Body']).forEach((property) =>
 			{
 				if (Object.prototype.hasOwnProperty.call(rawJson['v:Envelope']['v:Body'], property))
@@ -324,7 +339,59 @@ class ZoetisNetgearRouter extends NetgearRouter {
 					{
 						Object.keys(rawJson['v:Envelope']['v:Body'][property]).forEach((i_property) =>
 							{
-								obj[i_property] = rawJson['v:Envelope']['v:Body'][property][i_property]._text;
+								if ('_text' in rawJson['v:Envelope']['v:Body'][property][i_property])
+									obj[i_property] = rawJson['v:Envelope']['v:Body'][property][i_property]._text;
+								else
+								{
+									if (Array.isArray(rawJson['v:Envelope']['v:Body'][property][i_property]))
+									{
+										obj[i_property] = [];
+
+										for (var i in rawJson['v:Envelope']['v:Body'][property][i_property])
+										{
+											obj[i_property][i] = {};
+											Object.keys(rawJson['v:Envelope']['v:Body'][property][i_property][i]).forEach((j_property) =>
+											{
+												obj[i_property][i][j_property] = rawJson['v:Envelope']['v:Body'][property][i_property][i][j_property]._text;
+											});
+										}
+									}
+									else
+									{
+										obj[i_property] = {};
+										
+										Object.keys(rawJson['v:Envelope']['v:Body'][property][i_property]).forEach((j_property) =>
+										{
+											if ('_text' in rawJson['v:Envelope']['v:Body'][property][i_property][j_property])
+												obj[i_property][j_property] = rawJson['v:Envelope']['v:Body'][property][i_property][j_property]._text;
+											else
+											{
+												if (Array.isArray(rawJson['v:Envelope']['v:Body'][property][i_property][j_property]))
+												{
+													obj[i_property][j_property] = [];
+
+													for (var i in rawJson['v:Envelope']['v:Body'][property][i_property][j_property])
+													{
+														obj[i_property][j_property][i] = {};
+														Object.keys(rawJson['v:Envelope']['v:Body'][property][i_property][j_property][i]).forEach((k_property) =>
+														{
+															obj[i_property][j_property][i][k_property] = rawJson['v:Envelope']['v:Body'][property][i_property][j_property][i][k_property]._text;
+														});
+													}
+												}
+												else
+												{
+													obj[i_property][j_property] = {};
+
+													Object.keys(rawJson['v:Envelope']['v:Body'][property][i_property][j_property]).forEach((k_property) =>
+													{
+														obj[i_property][j_property][k_property] = rawJson['v:Envelope']['v:Body'][property][i_property][j_property][k_property]._text;
+													});
+												}
+											}
+										});
+									}
+								}
 							}
 						);
 					}
